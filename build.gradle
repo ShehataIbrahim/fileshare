@@ -1,0 +1,90 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.streams.tools.itrip'
+version = '0.0.1'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+
+}
+
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+    annotationProcessor('org.springframework.boot:spring-boot-configuration-processor') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+    implementation('org.springframework.boot:spring-boot-starter-mail') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+    implementation('org.springframework.boot:spring-boot-devtools') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+    implementation('org.springframework.boot:spring-boot-starter-log4j2')
+
+    implementation('org.springframework.integration:spring-integration-mail') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.9'
+    implementation 'com.google.api-client:google-api-client:1.30.4'
+    implementation 'com.google.oauth-client:google-oauth-client-jetty:1.30.6'
+    implementation 'com.google.apis:google-api-services-sheets:v4-rev581-1.25.0'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+}
+
+test {
+    useJUnitPlatform()
+}
+task copyFilesToExe() {
+    def tasks = [clean, bootJar]
+    for (int i = 0; i < tasks.size() - 1; i++) {
+        tasks[i + 1].mustRunAfter(tasks[i])
+    }
+    dependsOn(tasks)
+    doLast {
+        mkdir("./build/libs/config")
+        copy {
+            from './config/mail.properties'
+            into "./build/libs/config/"
+        }
+
+        copy {
+            from './config/application.properties'
+            into "./build/libs/config/"
+        }
+        copy {
+            from 'Fly Dubai.xlsx'
+            into "./build/libs/"
+        }
+        copy {
+            from 'iTripMailAget-0.0.1.exe'
+            into "./build/libs/"
+        }
+
+    }
+}
+task zipExe(type: Zip) {
+    from 'build/libs/'
+    include '*'
+    include '*/*' //to include contents of a folder present inside Reports directory
+    archiveName project.name + '.zip'
+    destinationDir(file('build/'))
+}
+
+tasks.named('zipExe') { dependsOn('copyFilesToExe') }

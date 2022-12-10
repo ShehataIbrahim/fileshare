@@ -1,0 +1,115 @@
+<html>
+<script type="text/javascript">
+    function generateTable() {
+  // creates a <table> element and a <tbody> element
+  const tblBody = document.getElementById("table-body");
+  tblBody.innerHTML = "";
+
+  // creating all cells
+    var difficulty=2;
+  for (let i = 0; i < 14 ; i++) {
+    // creates a table row
+    const row = document.createElement("tr");
+    if(difficulty<Math.floor(i/3))
+    difficulty=Math.floor(i/3);
+    var currentScale=Math.pow(10,difficulty);
+    for (let j = 0; j < 4; j++) {
+      // Create a <td> element and a text node, make the text
+      // node the contents of the <td>, and put the <td> at
+      // the end of the table row
+      const cell = document.createElement("td");
+
+      const cellText = document.createTextNode(Math.floor(Math.random() * currentScale)+` `+document.getElementById('txtOperator').value+` `+Math.floor(Math.random() * currentScale)+' =');
+      console.log(cellText);
+      console.log(cellText.innerHTML);
+
+      cellText.innerHTML += "&ensp;"
+      cell.appendChild(cellText);
+      row.appendChild(cell);
+    }
+
+    // add the row to the end of the table body
+    tblBody.appendChild(row);
+  }
+
+}
+
+
+
+</script>
+<style type="text/css">
+
+#main {
+	width: 780px;
+	padding: 20px;
+	margin: auto;
+}
+
+table.timecard {
+	width: 800px;
+	border-collapse: collapse;
+	border: 2px solid #fff; /*for older IE*/
+	border-style: inherit;
+}
+
+table.timecard caption {
+
+	color: #fff;
+	font-size: x-large;
+	font-weight: bold;
+	letter-spacing: .3em;
+}
+
+table.timecard thead th {
+	padding: 8px;
+
+	font-size: large;
+}
+
+table.timecard thead th#thDay {
+	width: 40%;
+}
+
+table.timecard thead th#thRegular, table.timecard thead th#thOvertime, table.timecard thead th#thTotal {
+	width: 20%;
+}
+
+table.timecard th, table.timecard td {
+	font-size: larger;
+	font-weight: bold;
+	padding: 25px;
+	border-width: 1px;
+	border-style: solid;
+}
+
+table.timecard td {
+	text-align: left;
+}
+
+
+
+</style>
+<style media="print">
+  .noPrint{ display: none; }
+
+
+</style>
+<body>
+<div class="noPrint">
+    input Operator: <select id="txtOperator">
+    <option value="+">+</option>
+    <option value="-">-</option>
+    <option value="X">X</option>
+    <option value="/">/</option>
+</select><br/>
+    <input type="button" value="Generate a table" onclick="generateTable()"/>
+</div>
+<table class="timecard yesPrint">
+    <tbody id="table-body">
+    </tbody>
+</table>
+</body>
+</html>
+
+
+
